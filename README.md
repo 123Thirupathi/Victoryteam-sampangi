@@ -10,11 +10,11 @@
     <a href="https://phpc.social/@kimai" rel="me"><img alt="Mastodon" src="https://img.shields.io/badge/toot-%40kimai-8c8dff"></a>
 </p>
 
-<h1 align="center">Kimai - time-tracker</h1>
+<h1 align="center">SampangiVictory team - time-tracker</h1>
 
-Kimai is a professional grade time-tracking application, free and open-source. 
+Sampangivictory Team is a professional grade time-tracking application, free and open-source. 
 It handles use-cases of freelancers as well as companies with dozens or hundreds of users. 
-Kimai was build to track your project times and ships with many advanced features, including but not limited to:
+Victory was build to track your project times and ships with many advanced features, including but not limited to:
 
 JSON API, invoicing, data exports, multi-timer and punch-in punch-out mode, tagging, multi-user - multi-timezones - multi-language ([over 30 translations existing](https://hosted.weblate.org/projects/kimai/)!),
 authentication via SAML/LDAP/Database, two-factor authentication (2FA) with TOTP, customizable role and team permissions, responsive design,
@@ -23,7 +23,7 @@ and so much more.
 
 ### Links
 
-- [Home](https://www.kimai.org) — Kimai project homepage
+- [Home](https://www.kimai.org) — Sampangi Victory project homepage
 - [Blog](https://www.kimai.org/blog/) — Read the latest news
 - [Documentation](https://www.kimai.org/documentation/) — Learn how to use Kimai
 
@@ -81,7 +81,7 @@ There is one simple rule in our "Code of conduct": Don't be an ass!
 
 ### Credits
 
-Kimai is based on modern technologies and frameworks such as [PHP](https://www.php.net/),
+Sampangi Victory is based on modern technologies and frameworks such as [PHP](https://www.php.net/),
 [Symfony](https://github.com/symfony/symfony) and [Doctrine](https://github.com/doctrine/),
 [Bootstrap](https://github.com/twbs/bootstrap) and [Tabler](https://tabler.io/),
 and [countless](composer.json) [others](package.json).
