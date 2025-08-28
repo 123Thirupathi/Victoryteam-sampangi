@@ -19,4 +19,4 @@ RUN chown -R www-data:www-data /opt/kimai/var /opt/kimai/public
 EXPOSE 8080
 
 # Start Apache
-CMD ["apache2-foreground"]
+CMD php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration && apache2-foreground
