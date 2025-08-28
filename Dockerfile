@@ -1,22 +1,18 @@
-FROM kimai/kimai2:apache
+FROM php:8.2-apache
 
-# Set document root
-ENV APACHE_DOCUMENT_ROOT=/opt/kimai/public
-ENV TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR
-ENV PORT=8080
+# Required extensions for Kimai
+RUN apt-get update && apt-get install -y \
+    git unzip libicu-dev libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql intl
 
-# Update Apache configs to use correct root
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/000-default.conf \
-    && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+# Set working directory
+WORKDIR /var/www/html
 
-# Enable Apache modules needed by Kimai
-RUN a2enmod rewrite headers env dir mime
+# Copy project files into container
+COPY . .
 
-# Permissions fix: www-data user should own files
-RUN chown -R www-data:www-data /opt/kimai/var /opt/kimai/public
+# Permissions
+RUN chown -R www-data:www-data var
 
-# Expose Render port
-EXPOSE 8080
-
-# Start Apache
+# Run migrations before Apache starts
 CMD php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration && apache2-foreground
