@@ -1,26 +1,28 @@
 FROM php:8.2-apache
 
-# 1. Install OS packages and PHP extensions
+# 1. Install required system dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip libicu-dev libpq-dev libzip-dev curl \
-    && docker-php-ext-install pdo pdo_pgsql intl zip   # 👈 added zip
+    git unzip libzip-dev libpng-dev libxml2-dev libxslt-dev \
+    && docker-php-ext-install pdo pdo_pgsql zip gd xsl intl \
+    && docker-php-ext-enable gd xsl
 
-# 2. Install Composer
+# 2. Enable Apache mod_rewrite
+RUN a2enmod rewrite
+
+# 3. Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# 3. Set working directory
+# 4. Set workdir
 WORKDIR /var/www/html
 
-# 4. Copy Composer config and install dependencies
+# 5. Copy composer config
 COPY composer.json composer.lock ./
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --no-dev --optimize-autoloader
-# 👆 added COMPOSER_ALLOW_SUPERUSER=1 to avoid plugin block
 
-# 5. Copy rest of the project
+# 6. Install PHP dependencies
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --no-dev --optimize-autoloader
+
+# 7. Copy the rest of the app
 COPY . .
 
-# 6. Fix file permissions
-RUN chown -R www-data:www-data var
-
-# 7. Run migrations before Apache starts
+# 8. Run migrations + start Apache
 CMD php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration && apache2-foreground
