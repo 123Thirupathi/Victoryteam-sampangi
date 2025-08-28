@@ -2,8 +2,8 @@ FROM php:8.2-apache
 
 # 1. Install OS packages and PHP extensions
 RUN apt-get update && apt-get install -y \
-    git unzip libicu-dev libpq-dev curl \
-    && docker-php-ext-install pdo pdo_pgsql intl
+    git unzip libicu-dev libpq-dev libzip-dev curl \
+    && docker-php-ext-install pdo pdo_pgsql intl zip   # 👈 added zip
 
 # 2. Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -13,7 +13,8 @@ WORKDIR /var/www/html
 
 # 4. Copy Composer config and install dependencies
 COPY composer.json composer.lock ./
-RUN composer install --no-interaction --no-dev --optimize-autoloader
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --no-dev --optimize-autoloader
+# 👆 added COMPOSER_ALLOW_SUPERUSER=1 to avoid plugin block
 
 # 5. Copy rest of the project
 COPY . .
