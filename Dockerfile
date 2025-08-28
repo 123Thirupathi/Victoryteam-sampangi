@@ -1,34 +1,25 @@
-# Use official PHP image
-FROM php:8.2-cli
+FROM php:8.2-apache
 
-# Set working directory
+# 1. Install OS packages and PHP extensions
+RUN apt-get update && apt-get install -y \
+    git unzip libicu-dev libpq-dev curl \
+    && docker-php-ext-install pdo pdo_pgsql intl
+
+# 2. Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# 3. Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    zip \
-    unzip \
-    libzip-dev \
-    && docker-php-ext-install zip
-
-# Allow Composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER=1
-
-# Copy composer files first for caching
+# 4. Copy Composer config and install dependencies
 COPY composer.json composer.lock ./
-
-# Install PHP dependencies
 RUN composer install --no-interaction --no-dev --optimize-autoloader
 
-# Copy rest of the project
+# 5. Copy rest of the project
 COPY . .
 
-# Clear Symfony cache
-RUN php bin/console cache:clear
+# 6. Fix file permissions
+RUN chown -R www-data:www-data var
 
-# Expose port (if web server needed)
-EXPOSE 8000
-
-# Start Symfony server (optional)
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# 7. Run migrations before Apache starts
+CMD php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration && apache2-foreground
