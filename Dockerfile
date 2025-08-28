@@ -1,27 +1,22 @@
-# Base PHP image
-FROM php:8.2-cli
+FROM php:8.2-apache
 
-# Install dependencies for PHP
+# Required PHP extensions
 RUN apt-get update && apt-get install -y \
-    git unzip libicu-dev libzip-dev libpng-dev libxml2-dev libonig-dev \
-    && docker-php-ext-install intl pdo pdo_mysql zip gd
+    libicu-dev libpq-dev libzip-dev unzip git \
+    && docker-php-ext-install intl pdo pdo_pgsql zip \
+    && docker-php-ext-enable intl
 
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Enable Apache rewrite
+RUN a2enmod rewrite
 
-# Set working directory
-WORKDIR /var/www/html
+# Workdir
+WORKDIR /var/www/kimai
 
-# Copy project files
-COPY . .
+# Copy Kimai code
+COPY . /var/www/kimai
 
-# 7. Allow Symfony/Flex plugins + install PHP dependencies
-RUN composer config allow-plugins.symfony/flex true \
-    && composer config allow-plugins.symfony/runtime true \
-    && COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --no-dev --optimize-autoloader
+# Apache config update (point to public/)
+RUN sed -i 's|/var/www/html|/var/www/kimai/public|g' /etc/apache2/sites-available/000-default.conf \
+    && chown -R www-data:www-data /var/www/kimai
 
-# Expose port
-EXPOSE 8000
-
-# Run Symfony app
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+EXPOSE 80
