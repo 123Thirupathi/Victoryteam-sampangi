@@ -1,11 +1,10 @@
 FROM kimai/kimai2:apache
 
-ENV APACHE_DOCUMENT_ROOT=/opt/kimai/public
-ENV TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR
+# Copy your custom branding (logos, css, favicon etc.)
+COPY public/ /opt/kimai/public/
 
-# Railway lo VOLUME support ledu 🚫 (so skip)
-# VOLUME [ "/opt/kimai/var" ]
+# Enable Apache rewrite (needed for Symfony routes)
+RUN a2enmod rewrite
 
-EXPOSE 8080
-
-CMD ["apache2-foreground"]
+# Expose port 80 (Railway routes automatically)
+EXPOSE 80
