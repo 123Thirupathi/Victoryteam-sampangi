@@ -1,16 +1,21 @@
 FROM kimai/kimai2:apache
 
-# Document root
+# Set document root
 ENV APACHE_DOCUMENT_ROOT=/opt/kimai/public
 ENV TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR
-
-# Render PORT use cheyali (dynamic ga set avuthundi)
 ENV PORT=8080
 
-# Apache ki Render port attach cheyadam
-RUN echo "Listen ${PORT}" > /etc/apache2/ports.conf
+# Update Apache configs to use correct root
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/000-default.conf \
+    && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Railway/Rander PORT use cheyali
+# Enable Apache modules needed by Kimai
+RUN a2enmod rewrite headers env dir mime
+
+# Permissions fix: www-data user should own files
+RUN chown -R www-data:www-data /opt/kimai/var /opt/kimai/public
+
+# Expose Render port
 EXPOSE 8080
 
 # Start Apache
