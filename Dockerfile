@@ -23,7 +23,7 @@ WORKDIR /var/www/kimai
 COPY . /var/www/kimai
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer install --no-dev --optimize-autoloader
 
 
 # Update Apache DocumentRoot to Kimai's public folder
