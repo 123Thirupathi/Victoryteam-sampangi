@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  kimai:
+    image: kimai/kimai2:apache
+    container_name: kimai_app
+    ports:
+      - "8001:80"
+    environment:
+      - ADMINMAIL=thirupathikodaganti7@gmail.com
+      - ADMINPASS=@123Ziyalt262019
+      - DATABASE_URL=pgsql://kimai_postgres_user:FtRcqJFXLHbi4mZsj6lhLm1SAMrCgxbI@dpg-d2nun53ipnbc73cvoltg-a.oregon-postgres.render.com:5432/kimai_postgres
+      - APACHE_DOCUMENT_ROOT=/opt/kimai/public
+      - APACHE_RUN_USER=www-data
+      - APACHE_RUN_GROUP=www-data
+    volumes:
+      - kimai_data:/opt/kimai
+
+volumes:
+  kimai_data:
