@@ -20,6 +20,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Enable Apache rewrite
 RUN a2enmod rewrite
 
+# Increase PHP memory limit (custom php.ini)
+COPY php.ini /usr/local/etc/php/conf.d/php-memory-limit.ini
+
 WORKDIR /var/www/kimai
 
 # Copy Kimai code
